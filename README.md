@@ -26,13 +26,23 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Installation
+## Paso 1: Instalar los paquetes
 
 ```bash
 $ npm install
 ```
 
-## Running the app
+## Paso 2: Configurar el archivo .env.example a .env para que funcione la Base de datos
+
+## Paso 3: Correr el prisma un tu computadora
+```bash
+$ npx prisma generate
+```
+### o puede ser igual
+```bash
+$ npx prisma migrate dev --name init
+```
+## Paso 4: Correr la app
 
 ```bash
 # development
@@ -44,29 +54,6 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
 
 ## License
 
