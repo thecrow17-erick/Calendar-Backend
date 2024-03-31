@@ -1,0 +1,112 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Student{
+  id                  String @default(uuid()) @db.Uuid @id
+  name                String @db.VarChar(50)
+  dad_lastname        String @db.VarChar(50)
+  mother_lastname     String @db.VarChar(50)
+  phone               String @db.VarChar(8)
+  ci                  String @db.VarChar(10)
+  sex                 Sex
+  status              Boolean @default(true)
+
+  registration        Registration_Course[] 
+
+  createdAt           DateTime @default(now()) 
+  updatedAt           DateTime @default(now()) @updatedAt
+}
+
+enum Sex{
+  Masculino
+  Femenino
+}
+
+model Grade{
+  id                  String @default(uuid()) @db.Uuid @id
+  name                String @db.VarChar(60) 
+  desc                String @db.Text
+  status              Boolean @default(true)
+  course              Course[]
+
+  createdAt           DateTime @default(now()) 
+  updatedAt           DateTime @default(now()) @updatedAt
+}
+
+model Course{
+  id                  String @default(uuid()) @db.Uuid @id
+  name                String @db.VarChar(60)
+  status              Boolean @default(true)
+
+  gradeId             String @db.Uuid
+  grade               Grade @relation(fields: [gradeId] , references: [id]) 
+
+  parallel            Parallel[]
+
+  createdAt           DateTime @default(now()) 
+  updatedAt           DateTime @default(now()) @updatedAt
+}
+
+model Parallel{
+  id                  String @db.Uuid @default(uuid()) @id
+  courseId            String @db.Uuid
+  course              Course @relation(fields: [courseId], references: [id])
+  name                String @db.VarChar(50) 
+  status              Boolean @default(true)
+
+  registration        Registration_Course[] 
+
+
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @default(now()) @updatedAt
+}
+
+model Management{
+  id                  String @db.Uuid @default(uuid()) @id
+  year                String @db.VarChar(4) @unique
+  description         String @db.Text
+  status              Boolean @default(true)
+
+  registration        Registration_Course[] 
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @default(now()) @updatedAt
+}
+
+model Registration_Course{
+  parallelId          String @db.Uuid 
+  parallel            Parallel @relation(fields: [parallelId], references: [id])
+
+  studentId           String @db.Uuid
+  student             Student @relation(fields: [studentId], references: [id])
+
+  managementId        String @db.Uuid
+  management          Management @relation(fields: [managementId], references: [id]) 
+
+
+  @@id([parallelId,studentId])
+}
+
+
+model Matter{
+  id                  String @db.Uuid @default(uuid()) @id
+  name                String @db.VarChar(60)
+  status              Boolean @default(true)
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @default(now()) @updatedAt
+}
+
