@@ -1,31 +1,31 @@
-import {  Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { CreateManagementDto,UpdateManagementDto } from './dto';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+
 import { PrismaService } from 'src/prisma';
-import {  IOptionManagement } from './interface';
+import { IOptionGrade } from './interface';
+import { CreateGradeDto,UpdateGradeDto } from './dto';
 
 @Injectable()
-export class ManagementService {
-
+export class GradeService {
   constructor(
     private readonly prisma:PrismaService
   ){}
 
-  async create(createManagementDto: CreateManagementDto) {
+  async create(createGradeDto: CreateGradeDto) {
     try {
-      const findManagement = await this.findManagement({
+      const findGrade = await this.findGrade({
         where:{
-          year: createManagementDto.year
+          name: createGradeDto.name
         }
       })
-      if(findManagement) throw new NotFoundException(`Management ${findManagement.year} is now available`)
+      if(findGrade) throw new NotFoundException(`grade ${findGrade.name} is now available`)
 
-      const createManagement = await this.prisma.management.create({
+      const createGrade = await this.prisma.grade.create({
         data:{
-          description: createManagementDto.description,
-          year: createManagementDto.year
+          desc: createGradeDto.desc,
+          name: createGradeDto.name
         }
       })
-      return createManagement;
+      return createGrade;
     } catch (err) {
       console.log(err);
       if (err instanceof NotFoundException) {
@@ -36,31 +36,31 @@ export class ManagementService {
     }
   }
 
-  async findManagement(
+  async findGrade(
     {
       where,
-    }: IOptionManagement
+    }: IOptionGrade
   ){
     try {
-      const managementFind = await this.prisma.management.findFirst({
+      const gradeFind = await this.prisma.grade.findFirst({
         where
       })
 
       // if(!managementFind) throw new NotFoundException('Management not found')
       
-      return managementFind;
+      return gradeFind;
     } catch (err) {
       throw new InternalServerErrorException(`This server error ${JSON.stringify(err)}`)
     }
   }
 
-  async countManagement(
+  async countGrade(
     {
       where,
-    }: IOptionManagement
+    }: IOptionGrade
   ){
     try {
-      const managements = await this.prisma.management.count({
+      const managements = await this.prisma.grade.count({
         where
       });
       return managements;
@@ -79,10 +79,10 @@ export class ManagementService {
     orderBy,
     cursor,
     distinct,
-    }: IOptionManagement
+    }: IOptionGrade
     ) {
     try {
-      const managements = await this.prisma.management.findMany({
+      const grades = await this.prisma.grade.findMany({
         where,
         select,
         skip,
@@ -91,23 +91,23 @@ export class ManagementService {
         cursor,
         distinct,
       });
-      return managements;
+      return grades;
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(`This server error ${JSON.stringify(error)}`)
     }
   }
 
-  async findIdManagement(id: string) {
+  async findIdGrade(id: string) {
     try {
-      const management = await this.prisma.management.findUnique({
+      const grade = await this.prisma.grade.findUnique({
         where:{
           id
         }
       })
-      if(!management) throw new NotFoundException(`Not found management with id ${id}`)
+      if(!grade) throw new NotFoundException(`Not found management with id ${id}`)
 
-      return management;
+      return grade;
     } catch (err) {
       if(err instanceof NotFoundException){
         throw err
@@ -116,19 +116,27 @@ export class ManagementService {
     }
   }
 
-  async update(id: string, updateManagementDto: UpdateManagementDto) {
+  async update(id: string, updateGradeDto: UpdateGradeDto) {
     try {
       //pregunto si existe el id
-      const findDescription = await this.findIdManagement(id);
+      const findGradeId = await this.findIdGrade(id);
+
+      //pregunto si nombre es igual a otro en la tabla
+      const findGrade = await this.findGrade({
+        where:{
+          name: updateGradeDto.name
+        }
+      })
+      if(findGrade) throw new NotFoundException(`grade ${findGrade.name} is now available`)
 
       //ahora si actualizo
-      const updateManagent = await this.prisma.management.update({
+      const updateManagent = await this.prisma.grade.update({
         where:{
           id
         },
         data:{
-          description: updateManagementDto.description ?? findDescription.description,
-          year: updateManagementDto.year ?? findDescription.year
+          desc: updateGradeDto.desc ?? findGradeId.desc,
+          name: updateGradeDto.name ?? findGradeId.name
         }
       })
       return updateManagent;
@@ -144,10 +152,10 @@ export class ManagementService {
   async remove(id: string) {
     try {
       //pregunto si existe el id
-      await this.findIdManagement(id);
+      await this.findIdGrade(id);
 
       //ahora si actualizo
-      const deleteManagement = await this.prisma.management.update({
+      const deleteGrade = await this.prisma.grade.update({
         where:{
           id
         },
@@ -155,7 +163,7 @@ export class ManagementService {
           status: false
         }
       })
-      return deleteManagement;
+      return deleteGrade;
 
     } catch (err) {
       if(err instanceof NotFoundException){

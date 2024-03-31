@@ -2,7 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Res, Internal
 import { Response } from 'express';
 
 import { ManagementService } from './management.service';
-import { CreateManagementDto,UpdateManagementDto,queryManagementDto } from './dto';
+import { CreateManagementDto,UpdateManagementDto } from './dto';
+import {queryPagesDto} from '../common/dto'
 import { ParsePostgresIdPipe } from 'src/common/pipes/parse-postgres-id';
 
 @Controller('management')
@@ -20,11 +21,15 @@ export class ManagementController {
     } 
 
   @Get()
-  async findAll(@Query() query: queryManagementDto, @Res() res: Response) {
+  async findAll(@Query() query: queryPagesDto, @Res() res: Response) {
     const statusCode = HttpStatus.OK
     try {
       const [total, managements] = await Promise.all([
-        this.managementService.countManagement({}),
+        this.managementService.countManagement({
+          where:{
+            status: true
+          }
+        }),
         this.managementService.findAll({skip: +query.skip, take: +query.take, where:{
           status: true
         }})

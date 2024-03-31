@@ -1,6 +1,6 @@
 import { IsNumberString, IsOptional } from "class-validator"
 
-export class queryManagementDto {
+export class queryPagesDto {
 
   @IsOptional()
   @IsNumberString()

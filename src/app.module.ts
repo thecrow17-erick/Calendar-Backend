@@ -2,9 +2,12 @@ import { Module } from '@nestjs/common';
 import { PrismaModule } from './prisma/prisma.module';
 import { StudentModule } from './student/student.module';
 import { ManagementModule } from './management/management.module';
+import { CourseModule } from './course/course.module';
+import { GradeModule } from './grade/grade.module';
+import { ParallelModule } from './parallel/parallel.module';
 
 @Module({
-  imports: [PrismaModule, StudentModule, ManagementModule],
+  imports: [PrismaModule, StudentModule, ManagementModule, CourseModule, GradeModule, ParallelModule],
   controllers: [],
   providers: [],
 })
