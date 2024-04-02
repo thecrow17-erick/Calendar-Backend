@@ -7,6 +7,7 @@ import { PrismaModule } from 'src/prisma';
 @Module({
   controllers: [ParallelController],
   providers: [ParallelService],
-  imports:[PrismaModule]
+  imports:[PrismaModule],
+  exports: [ParallelService]
 })
 export class ParallelModule {}

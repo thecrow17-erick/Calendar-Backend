@@ -20,6 +20,8 @@ model Student{
   mother_lastname     String @db.VarChar(50)
   phone               String @db.VarChar(8)
   ci                  String @db.VarChar(10)
+  email               String @db.VarChar(50)
+  password            String @db.Text
   sex                 Sex
   status              Boolean @default(true)
 
@@ -66,6 +68,7 @@ model Parallel{
   name                String @db.VarChar(1) 
   status              Boolean @default(true)
 
+  classes             Teacher_Class[]
   registration        Registration_Course[] 
 
 
@@ -81,6 +84,7 @@ model Management{
   status              Boolean @default(true)
 
   registration        Registration_Course[] 
+  classAsigned        Teacher_Class[]
 
   createdAt           DateTime @default(now())
   updatedAt           DateTime @default(now()) @updatedAt
@@ -96,15 +100,54 @@ model Registration_Course{
   managementId        String @db.Uuid
   management          Management @relation(fields: [managementId], references: [id]) 
 
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @default(now()) @updatedAt
+
 
   @@id([parallelId,studentId])
 }
+
+model Teacher_Class{
+  teacherId           String @db.Uuid
+  teacher             Teacher @relation(fields: [teacherId],references: [id])
+
+  parallelId          String @db.Uuid
+  parallel            Parallel @relation(fields: [parallelId], references: [id])
+
+  matterId            String @db.Uuid     
+  matter              Matter @relation(fields: [matterId],references: [id])   
+
+  managementId        String @db.Uuid
+  management          Management @relation(fields: [managementId], references: [id]) 
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @default(now()) @updatedAt
+
+  @@id([teacherId,parallelId])  
+}
+
+
+model Teacher{
+  id                String @db.Uuid @default(uuid()) @id
+  name              String @db.VarChar(60)
+  email             String @db.VarChar(50)
+  password          String @db.Text
+  status            Boolean @default(true)
+  classes           Teacher_Class[]
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @default(now()) @updatedAt
+}
+
 
 
 model Matter{
   id                  String @db.Uuid @default(uuid()) @id
   name                String @db.VarChar(60)
   status              Boolean @default(true)
+
+  classAsigned        Teacher_Class[]
+
 
   createdAt           DateTime @default(now())
   updatedAt           DateTime @default(now()) @updatedAt
